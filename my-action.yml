@@ -1,0 +1,24 @@
+name: My GitHub Action
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  run-my-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Add a step containing your email address
+      - name: 24ds1000046@ds.study.iitm.ac.in
+        run: echo "Hello, world!"
+
+      # Step 3: Display the current date (or any other task you'd like)
+      - name: Show date
+        run: date
