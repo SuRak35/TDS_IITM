@@ -2,27 +2,29 @@ import json
 from http.server import BaseHTTPRequestHandler
 import os
 
-# Load the JSON data
+# Load the JSON file
 file_path = os.path.join(os.path.dirname(_file_), 'q-vercel-python.json')
-with open(file_path) as f:
-    data = json.load(f)
+with open(file_path, 'r') as file:
+    data = json.load(file)
+
+# Convert the list of dictionaries into a dictionary for fast lookup
+marks_dict = {entry["name"]: entry["marks"] for entry in data}
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse query parameters
         query = self.path.split('?')[-1]
-        params = dict(qc.split('=') for qc in query.split('&') if '=' in qc)
+        params = dict(pair.split('=') for pair in query.split('&') if '=' in pair)
 
-        # Extract the names from the query
-        names = params.get('name')
-        if names:
-            names = names.split(',')
+        # Extract names from query parameters
+        names = params.get('name', '').split(',')
 
-        # Find marks for the given names
-        marks = [data.get(name, 0) for name in names]
+        # Fetch marks for the given names
+        marks = [marks_dict.get(name, None) for name in names]
 
-        # Send response
+        # Respond with the marks
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        self.wfile.write(json.dumps({"marks": marks}).encode('utf-8'))
+        response = {"marks": marks}
+        self.wfile.write(json.dumps(response).encode('utf-8'))
