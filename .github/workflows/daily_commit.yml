@@ -21,10 +21,13 @@ jobs:
 
       - name: Create or update a file
         run: |
-          # This will append the current date and time to a file named status.txt
           echo "Commit made on $(date)" >> status.txt
           git add status.txt
-          git diff --cached  # To check if there are any changes
+          git diff --cached  # Show any staged changes
+
+      - name: Check status of git commit
+        run: |
+          git status  # Check if status.txt is staged for commit
 
       - name: Commit the changes
         run: |
@@ -32,4 +35,9 @@ jobs:
           
       - name: Push changes
         run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git push
+
+      - name: Check if commit was successful
+        run: |
+          git log -n 1  # Show the latest commit to confirm it was created
