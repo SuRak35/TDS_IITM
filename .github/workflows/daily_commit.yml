@@ -19,12 +19,16 @@ jobs:
           git config --local user.email "24ds1000046@ds.study.iitm.ac.in"
           git config --local user.name "DevSync Automation Bot"
 
-      - name: Create a commit
+      - name: Create or update a file
         run: |
-          # Add a new file or update an existing file (for example, status.txt)
+          # This will append the current date and time to a file named status.txt
           echo "Commit made on $(date)" >> status.txt
           git add status.txt
-          git commit -m "Daily commit for automated update"
+          git diff --cached  # To check if there are any changes
+
+      - name: Commit the changes
+        run: |
+          git commit -m "Daily commit for automated update" || echo "No changes to commit"
           
       - name: Push changes
         run: |
